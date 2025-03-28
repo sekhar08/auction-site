@@ -1,9 +1,10 @@
 import "./App.css";
-import TreasureTrove from "./components/TreasureTrove";
+import AuctionLogic from "./components/AuctionLogic";
+
 function App() {
   return (
     <div>
-      <TreasureTrove />
+      <AuctionLogic />
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function TreasureTrove() {
+export default function AuctionLogic() {
   const [inventory, setInventory] = useState([]);
   const [newBids, setNewBids] = useState({});
 
-  // GET list of items and latest bids
+  //function to get list of items and latest bid
   const retrieveItemList = () => {
     console.log("retrieveItemList() called");
     axios
@@ -24,27 +24,28 @@ export default function TreasureTrove() {
       });
   };
 
-  // POST a new bid
+  // Logic for initializing a new bid from the user
   const sendBid = (itemId, newBid, newBidUser) => {
-    console.log(`sendBid(${itemId}, ${newBid}, ${newBidUser}) called`);
     if (!newBid || isNaN(newBid) || newBid <= 0) {
       alert("Please enter a valid bid amount.");
       return;
     }
     axios
-      .post(
-        `http://localhost:3000/bid?id=${itemId}&newbid=${newBid}&newbiduser=${newBidUser}`
-      )
+      .post("http://localhost:3000/bid", {
+        id: itemId,
+        newBid: parseFloat(newBid),
+        newBidUser: newBidUser,
+      })
       .then((response) => {
         retrieveItemList();
-        console.log("The server accepted your bid");
+        console.log(response.data.message);
       })
       .catch((error) => {
         if (error.response) {
-          console.log(
-            `Error: ${error.response.status} - ${error.response.data}`
-          );
-          alert(`Error: ${error.response.status} - ${error.response.data}`);
+          const errorMessage =
+            error.response.data.error || "An unknown error occurred";
+          console.log(`Error: ${error.response.status} - ${errorMessage}`);
+          alert(`Error: ${error.response.status} - ${errorMessage}`);
         }
       });
   };
@@ -61,7 +62,7 @@ export default function TreasureTrove() {
         Treasure Trove
       </h1>
       <p className="text-blue font-medium text-xl text-center">
-        Logged in as Linda Mar (lindam@somewhere.com)
+        Logged in as Pushpa Raj (pushpa@somewhere.com)
       </p>
 
       <div className="max-w-[95%] mx-auto text-left">
@@ -74,7 +75,9 @@ export default function TreasureTrove() {
                     <td className="align-top">
                       <img
                         className="h-32 w-32 object-cover rounded-lg shadow-md"
-                        src={item.imageUrl}
+                        src={
+                          "https://images.squarespace-cdn.com/content/v1/5cb3485aebfc7f375fb3d93c/1714295266554-99G28PUMWCZ8T06LUXD5/280422+Antique+pots+XL+-+10.jpeg"
+                        }
                         alt={`${item.name} image`}
                       />
                     </td>
@@ -103,7 +106,7 @@ export default function TreasureTrove() {
                         />
                         <button
                           onClick={() =>
-                            sendBid(item.id, newBids[index], "lindam")
+                            sendBid(item.id, newBids[index], "Pushpa")
                           }
                           className="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         >
